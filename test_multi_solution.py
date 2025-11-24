@@ -6,7 +6,7 @@ from solvers import Z3PredecessorFinder, SATPredecessorFinder, ILPPredecessorFin
 from generate_alphabet import GenerateText
 
 def test_multi_solution():
-    print("Testing Multi-Solution Generation (Target: 32 solutions per letter)")
+    print("Testing Multi-Solution Generation (Target: 64 solutions per letter)")
     
     solvers = [
         ("SAT", SATPredecessorFinder()),
