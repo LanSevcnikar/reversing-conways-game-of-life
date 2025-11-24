@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import List, Optional
 from abc import ABC, abstractmethod
 import numpy as np
 
@@ -67,11 +67,40 @@ class PredecessorFinder(ABC):
     """
 
     @abstractmethod
-    def find_previous(self, grid: np.ndarray) -> np.ndarray:
+    def find_previous(self, grid: np.ndarray, seed: Optional[int] = None, exclude: Optional[List[np.ndarray]] = None) -> Optional[np.ndarray]:
         """
         Given a grid (numpy 2D array), attempt to find a previous grid
         that could have produced it according to the Game of Life rules.
-        Must return a numpy array of the same shape or None if no valid predecessor exists.
+        
+        Args:
+            grid: The target grid.
+            seed: Optional integer seed for randomization.
+            exclude: Optional list of grids to exclude from the search (to avoid cycles or visited states).
+            
+        Returns:
+            A numpy array of the same shape or None if no valid predecessor exists.
+        """
+        pass
+
+
+class HigherOrderSolver(ABC):
+    """
+    Abstract base class for finding ancestors N steps back in time.
+    """
+    
+    def __init__(self, finder: PredecessorFinder):
+        self.finder = finder
+
+    @abstractmethod
+    def solve(self, target_grid: np.ndarray, steps: int) -> List[np.ndarray]:
+        """
+        Find a sequence of grids [g_0, g_1, ..., g_steps] such that:
+        g_steps == target_grid
+        g_{i+1} is the next generation of g_i
+        
+        Returns the list of grids in chronological order (ancestor first).
+        Returns None (or raises exception?) if not found.
+        Let's say it returns None if it fails.
         """
         pass
 
