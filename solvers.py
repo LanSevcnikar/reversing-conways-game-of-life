@@ -170,8 +170,8 @@ class ILPPredecessorFinder(PredecessorFinder):
         for r in range(rows):
             for c in range(cols):
                 if grid[r,c] == 0:
-                    u_map[(r,c)] = [var_count, var_count+1, var_count+2]
-                    var_count += 3
+                    u_map[(r,c)] = [var_count]
+                    var_count += 1
                     dead_cells.append((r,c))
                     
         c_vec = np.zeros(var_count)
@@ -215,36 +215,38 @@ class ILPPredecessorFinder(PredecessorFinder):
                     coeffs = {ni: 1 for ni in neighs}
                     coeffs[x_map[(r,c)]] = 1
                     add_constr(coeffs, 3, M + 1)
-                    
                 else:
-                    u = u_map[(r,c)]
-                    u1, u2, u3 = u[0], u[1], u[2]
+                    # Dead cell logic (Optimized)
+                    # y=0 implies:
+                    # 1. n != 3
+                    # 2. if n=2 then x=0
                     
-                    # u1 + u2 + u3 >= 1
-                    add_constr({u1:1, u2:1, u3:1}, 1, 3)
+                    # We use 1 binary aux var u:
+                    # u=0 => n <= 2
+                    # u=1 => n >= 4
                     
-                    # n <= 1 + M(1-u1)
+                    # Constraints:
+                    # n <= 2 + M*u
+                    # n >= 4 - M*(1-u)
+                    # n + x <= 2 + M*u  (Enforces n=2 => x=0 when u=0)
+                    
+                    u = u_map[(r,c)][0] # We only need 1 var now
+                    
+                    # n <= 2 + M*u => n - M*u <= 2
                     coeffs = {ni: 1 for ni in neighs}
-                    coeffs[u1] = M
-                    add_constr(coeffs, -np.inf, 1 + M)
+                    coeffs[u] = -M
+                    add_constr(coeffs, -np.inf, 2)
                     
-                    # n >= 4 - M(1-u2)
+                    # n >= 4 - M(1-u) => n - M*u >= 4 - M
                     coeffs = {ni: 1 for ni in neighs}
-                    coeffs[u2] = -M
+                    coeffs[u] = -M
                     add_constr(coeffs, 4 - M, np.inf)
                     
-                    # n = 2 if u3=1
+                    # n + x <= 2 + M*u => n + x - M*u <= 2
                     coeffs = {ni: 1 for ni in neighs}
-                    coeffs[u3] = M
-                    add_constr(coeffs, -np.inf, 2 + M)
-                    
-                    coeffs = {ni: 1 for ni in neighs}
-                    coeffs[u3] = -M
-                    add_constr(coeffs, 2 - M, np.inf)
-                    
-                    # x = 0 if u3=1
-                    coeffs = {x_map[(r,c)]: 1, u3: M}
-                    add_constr(coeffs, -np.inf, M)
+                    coeffs[x_map[(r,c)]] = 1
+                    coeffs[u] = -M
+                    add_constr(coeffs, -np.inf, 2)
 
         res = milp(c=c_vec, integrality=integrality, bounds=Bounds(b_l, b_u), 
                    constraints=LinearConstraint(A_rows, b_l_rows, b_u_rows))
