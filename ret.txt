@@ -1,0 +1,233 @@
+================================================================================
+Comprehensive Solver Comparison (Standard vs Minimizing)
+================================================================================
+Letter | Solver          | Alive  | Time (s) | Verified
+------------------------------------------------------------
+A      | Z3 Standard     | Err    | 0.29     | Error   
+A      | Z3 Minimizer    | Err    | 0.27     | Error   
+A      | SAT Standard    | 108    | 0.10     | ✓       
+A      | SAT Minimizer   | 18     | 4.58     | ✓       
+A      | ILP Standard    | 30     | 0.60     | ✓       
+A      | ILP Minimizer   | 16     | 0.16     | ✓       
+B      | Z3 Standard     | Err    | 0.28     | Error   
+B      | Z3 Minimizer    | Err    | 0.33     | Error   
+B      | SAT Standard    | 103    | 0.12     | ✓       
+B      | SAT Minimizer   | 21     | 4.49     | ✓       
+B      | ILP Standard    | 106    | 0.45     | ✓       
+B      | ILP Minimizer   | 19     | 4.01     | ✓       
+C      | Z3 Standard     | Err    | 0.26     | Error   
+C      | Z3 Minimizer    | Err    | 0.26     | Error   
+C      | SAT Standard    | 99     | 0.10     | ✓       
+C      | SAT Minimizer   | 17     | 2.64     | ✓       
+C      | ILP Standard    | 106    | 0.40     | ✓       
+C      | ILP Minimizer   | 15     | 0.02     | ✓       
+D      | Z3 Standard     | Err    | 0.27     | Error   
+D      | Z3 Minimizer    | Err    | 0.32     | Error   
+D      | SAT Standard    | 103    | 0.10     | ✓       
+D      | SAT Minimizer   | 18     | 3.95     | ✓       
+D      | ILP Standard    | 22     | 0.43     | ✓       
+D      | ILP Minimizer   | 18     | 0.01     | ✓       
+E      | Z3 Standard     | Err    | 0.27     | Error   
+E      | Z3 Minimizer    | Err    | 0.26     | Error   
+E      | SAT Standard    | 104    | 0.13     | ✓       
+E      | SAT Minimizer   | 21     | 6.22     | ✓       
+E      | ILP Standard    | 19     | 0.38     | ✓       
+E      | ILP Minimizer   | 19     | 0.83     | ✓       
+F      | Z3 Standard     | Err    | 0.27     | Error   
+F      | Z3 Minimizer    | Err    | 0.32     | Error   
+F      | SAT Standard    | 112    | 0.09     | ✓       
+F      | SAT Minimizer   | 17     | 3.36     | ✓       
+F      | ILP Standard    | 116    | 0.62     | ✓       
+F      | ILP Minimizer   | 15     | 0.48     | ✓       
+G      | Z3 Standard     | Err    | 0.26     | Error   
+G      | Z3 Minimizer    | Err    | 0.27     | Error   
+G      | SAT Standard    | 107    | 0.09     | ✓       
+G      | SAT Minimizer   | 19     | 3.59     | ✓       
+G      | ILP Standard    | 99     | 0.53     | ✓       
+G      | ILP Minimizer   | 17     | 0.13     | ✓       
+H      | Z3 Standard     | Err    | 0.29     | Error   
+H      | Z3 Minimizer    | Err    | 0.29     | Error   
+H      | SAT Standard    | 105    | 0.10     | ✓       
+H      | SAT Minimizer   | 20     | 3.60     | ✓       
+H      | ILP Standard    | 109    | 0.40     | ✓       
+H      | ILP Minimizer   | 18     | 0.01     | ✓       
+I      | Z3 Standard     | Err    | 0.31     | Error   
+I      | Z3 Minimizer    | Err    | 0.35     | Error   
+I      | SAT Standard    | 107    | 0.12     | ✓       
+I      | SAT Minimizer   | 13     | 1.39     | ✓       
+I      | ILP Standard    | 122    | 0.71     | ✓       
+I      | ILP Minimizer   | 11     | 0.42     | ✓       
+J      | Z3 Standard     | Err    | 0.36     | Error   
+J      | Z3 Minimizer    | Err    | 0.28     | Error   
+J      | SAT Standard    | 109    | 0.10     | ✓       
+J      | SAT Minimizer   | 13     | 1.82     | ✓       
+J      | ILP Standard    | 117    | 0.77     | ✓       
+J      | ILP Minimizer   | 12     | 0.01     | ✓       
+K      | Z3 Standard     | Err    | 0.29     | Error   
+K      | Z3 Minimizer    | Err    | 0.34     | Error   
+K      | SAT Standard    | 107    | 0.10     | ✓       
+K      | SAT Minimizer   | 18     | 4.27     | ✓       
+K      | ILP Standard    | 104    | 0.43     | ✓       
+K      | ILP Minimizer   | 17     | 5.35     | ✓       
+L      | Z3 Standard     | Err    | 0.32     | Error   
+L      | Z3 Minimizer    | Err    | 0.28     | Error   
+L      | SAT Standard    | 98     | 0.13     | ✓       
+L      | SAT Minimizer   | 13     | 1.60     | ✓       
+L      | ILP Standard    | 14     | 0.27     | ✓       
+L      | ILP Minimizer   | 12     | 0.01     | ✓       
+M      | Z3 Standard     | Err    | 0.30     | Error   
+M      | Z3 Minimizer    | Err    | 0.31     | Error   
+M      | SAT Standard    | 106    | 0.14     | ✓       
+M      | SAT Minimizer   | 20     | 3.51     | ✓       
+M      | ILP Standard    | 106    | 0.73     | ✓       
+M      | ILP Minimizer   | 18     | 0.43     | ✓       
+N      | Z3 Standard     | Err    | 0.33     | Error   
+N      | Z3 Minimizer    | Err    | 0.35     | Error   
+N      | SAT Standard    | 101    | 0.11     | ✓       
+N      | SAT Minimizer   | 20     | 4.45     | ✓       
+N      | ILP Standard    | 19     | 0.35     | ✓       
+N      | ILP Minimizer   | 18     | 0.15     | ✓       
+O      | Z3 Standard     | Err    | 0.28     | Error   
+O      | Z3 Minimizer    | Err    | 0.33     | Error   
+O      | SAT Standard    | 108    | 0.12     | ✓       
+O      | SAT Minimizer   | 18     | 3.51     | ✓       
+O      | ILP Standard    | 24     | 0.52     | ✓       
+O      | ILP Minimizer   | 16     | 0.40     | ✓       
+P      | Z3 Standard     | Err    | 0.32     | Error   
+P      | Z3 Minimizer    | Err    | 0.34     | Error   
+P      | SAT Standard    | 115    | 0.10     | ✓       
+P      | SAT Minimizer   | 17     | 2.28     | ✓       
+P      | ILP Standard    | 107    | 0.48     | ✓       
+P      | ILP Minimizer   | 15     | 0.49     | ✓       
+Q      | Z3 Standard     | Err    | 0.27     | Error   
+Q      | Z3 Minimizer    | Err    | 0.27     | Error   
+Q      | SAT Standard    | 107    | 0.13     | ✓       
+Q      | SAT Minimizer   | 19     | 3.55     | ✓       
+Q      | ILP Standard    | 109    | 0.55     | ✓       
+Q      | ILP Minimizer   | 17     | 1.13     | ✓       
+R      | Z3 Standard     | Err    | 0.27     | Error   
+R      | Z3 Minimizer    | Err    | 0.32     | Error   
+R      | SAT Standard    | 99     | 0.10     | ✓       
+R      | SAT Minimizer   | 18     | 2.75     | ✓       
+R      | ILP Standard    | 110    | 0.49     | ✓       
+R      | ILP Minimizer   | 18     | 0.66     | ✓       
+S      | Z3 Standard     | Err    | 0.31     | Error   
+S      | Z3 Minimizer    | Err    | 0.27     | Error   
+S      | SAT Standard    | 97     | 0.10     | ✓       
+S      | SAT Minimizer   | 19     | 4.33     | ✓       
+S      | ILP Standard    | 19     | 0.70     | ✓       
+S      | ILP Minimizer   | 17     | 0.53     | ✓       
+T      | Z3 Standard     | Err    | 0.27     | Error   
+T      | Z3 Minimizer    | Err    | 0.27     | Error   
+T      | SAT Standard    | 115    | 0.10     | ✓       
+T      | SAT Minimizer   | 14     | 1.59     | ✓       
+T      | ILP Standard    | 14     | 0.34     | ✓       
+T      | ILP Minimizer   | 12     | 0.01     | ✓       
+U      | Z3 Standard     | Err    | 0.29     | Error   
+U      | Z3 Minimizer    | Err    | 0.27     | Error   
+U      | SAT Standard    | 104    | 0.13     | ✓       
+U      | SAT Minimizer   | 19     | 4.08     | ✓       
+U      | ILP Standard    | 110    | 0.46     | ✓       
+U      | ILP Minimizer   | 17     | 0.76     | ✓       
+V      | Z3 Standard     | Err    | 0.28     | Error   
+V      | Z3 Minimizer    | Err    | 0.27     | Error   
+V      | SAT Standard    | 106    | 0.10     | ✓       
+V      | SAT Minimizer   | 17     | 2.91     | ✓       
+V      | ILP Standard    | 102    | 0.47     | ✓       
+V      | ILP Minimizer   | 15     | 0.07     | ✓       
+W      | Z3 Standard     | Err    | 0.28     | Error   
+W      | Z3 Minimizer    | Err    | 0.28     | Error   
+W      | SAT Standard    | 91     | 0.10     | ✓       
+W      | SAT Minimizer   | 18     | 3.82     | ✓       
+W      | ILP Standard    | 113    | 0.64     | ✓       
+W      | ILP Minimizer   | 16     | 0.06     | ✓       
+X      | Z3 Standard     | Err    | 0.31     | Error   
+X      | Z3 Minimizer    | Err    | 0.29     | Error   
+X      | SAT Standard    | 107    | 0.11     | ✓       
+X      | SAT Minimizer   | 17     | 2.26     | ✓       
+X      | ILP Standard    | 109    | 0.37     | ✓       
+X      | ILP Minimizer   | 15     | 0.01     | ✓       
+Y      | Z3 Standard     | Err    | 0.33     | Error   
+Y      | Z3 Minimizer    | Err    | 0.27     | Error   
+Y      | SAT Standard    | 118    | 0.10     | ✓       
+Y      | SAT Minimizer   | 13     | 1.52     | ✓       
+Y      | ILP Standard    | 113    | 0.54     | ✓       
+Y      | ILP Minimizer   | 12     | 0.40     | ✓       
+Z      | Z3 Standard     | Err    | 0.26     | Error   
+Z      | Z3 Minimizer    | Err    | 0.28     | Error   
+Z      | SAT Standard    | 108    | 0.10     | ✓       
+Z      | SAT Minimizer   | 19     | 4.17     | ✓       
+Z      | ILP Standard    | 112    | 0.59     | ✓       
+Z      | ILP Minimizer   | 17     | 1.72     | ✓       
+
+================================================================================
+Summary Analysis
+================================================================================
+
+Comparison: Z3 Standard vs Z3 Minimizer
+Letter | Std Alive  | Min Alive  | Diff   | Std Time   | Min Time  
+----------------------------------------------------------------------
+
+Comparison: SAT Standard vs SAT Minimizer
+Letter | Std Alive  | Min Alive  | Diff   | Std Time   | Min Time  
+----------------------------------------------------------------------
+A      | 108        | 18         | 90     | 0.10       | 4.58      
+B      | 103        | 21         | 82     | 0.12       | 4.49      
+C      | 99         | 17         | 82     | 0.10       | 2.64      
+D      | 103        | 18         | 85     | 0.10       | 3.95      
+E      | 104        | 21         | 83     | 0.13       | 6.22      
+F      | 112        | 17         | 95     | 0.09       | 3.36      
+G      | 107        | 19         | 88     | 0.09       | 3.59      
+H      | 105        | 20         | 85     | 0.10       | 3.60      
+I      | 107        | 13         | 94     | 0.12       | 1.39      
+J      | 109        | 13         | 96     | 0.10       | 1.82      
+K      | 107        | 18         | 89     | 0.10       | 4.27      
+L      | 98         | 13         | 85     | 0.13       | 1.60      
+M      | 106        | 20         | 86     | 0.14       | 3.51      
+N      | 101        | 20         | 81     | 0.11       | 4.45      
+O      | 108        | 18         | 90     | 0.12       | 3.51      
+P      | 115        | 17         | 98     | 0.10       | 2.28      
+Q      | 107        | 19         | 88     | 0.13       | 3.55      
+R      | 99         | 18         | 81     | 0.10       | 2.75      
+S      | 97         | 19         | 78     | 0.10       | 4.33      
+T      | 115        | 14         | 101    | 0.10       | 1.59      
+U      | 104        | 19         | 85     | 0.13       | 4.08      
+V      | 106        | 17         | 89     | 0.10       | 2.91      
+W      | 91         | 18         | 73     | 0.10       | 3.82      
+X      | 107        | 17         | 90     | 0.11       | 2.26      
+Y      | 118        | 13         | 105    | 0.10       | 1.52      
+Z      | 108        | 19         | 89     | 0.10       | 4.17      
+
+Minimizer found fewer alive cells in 26/26 cases.
+
+Comparison: ILP Standard vs ILP Minimizer
+Letter | Std Alive  | Min Alive  | Diff   | Std Time   | Min Time  
+----------------------------------------------------------------------
+A      | 30         | 16         | 14     | 0.60       | 0.16      
+B      | 106        | 19         | 87     | 0.45       | 4.01      
+C      | 106        | 15         | 91     | 0.40       | 0.02      
+D      | 22         | 18         | 4      | 0.43       | 0.01      
+E      | 19         | 19         | 0      | 0.38       | 0.83      
+F      | 116        | 15         | 101    | 0.62       | 0.48      
+G      | 99         | 17         | 82     | 0.53       | 0.13      
+H      | 109        | 18         | 91     | 0.40       | 0.01      
+I      | 122        | 11         | 111    | 0.71       | 0.42      
+J      | 117        | 12         | 105    | 0.77       | 0.01      
+K      | 104        | 17         | 87     | 0.43       | 5.35      
+L      | 14         | 12         | 2      | 0.27       | 0.01      
+M      | 106        | 18         | 88     | 0.73       | 0.43      
+N      | 19         | 18         | 1      | 0.35       | 0.15      
+O      | 24         | 16         | 8      | 0.52       | 0.40      
+P      | 107        | 15         | 92     | 0.48       | 0.49      
+Q      | 109        | 17         | 92     | 0.55       | 1.13      
+R      | 110        | 18         | 92     | 0.49       | 0.66      
+S      | 19         | 17         | 2      | 0.70       | 0.53      
+T      | 14         | 12         | 2      | 0.34       | 0.01      
+U      | 110        | 17         | 93     | 0.46       | 0.76      
+V      | 102        | 15         | 87     | 0.47       | 0.07      
+W      | 113        | 16         | 97     | 0.64       | 0.06      
+X      | 109        | 15         | 94     | 0.37       | 0.01      
+Y      | 113        | 12         | 101    | 0.54       | 0.40      
+Z      | 112        | 17         | 95     | 0.59       | 1.72      
+
+Minimizer found fewer alive cells in 25/26 cases.

@@ -71,18 +71,48 @@ class PredecessorFinder(ABC):
     @abstractmethod
     def find_previous(self, grid: np.ndarray, seed: Optional[int] = None, exclude: Optional[List[np.ndarray]] = None) -> Optional[np.ndarray]:
         """
-        Given a grid (numpy 2D array), attempt to find a previous grid
-        that could have produced it according to the Game of Life rules.
+        Given a grid (numpy 2D array), find a previous grid that could have produced it.
         
         Args:
             grid: The target grid.
             seed: Optional integer seed for randomization.
-            exclude: Optional list of grids to exclude from the search (to avoid cycles or visited states).
+            exclude: Optional list of grids to exclude from the search.
             
         Returns:
-            A numpy array of the same shape or None if no valid predecessor exists.
+            A numpy array of the same shape, or None if no predecessor found.
         """
         pass
+
+    def find_n_previous(self, grid: np.ndarray, n: int, seed: Optional[int] = None, exclude: Optional[List[np.ndarray]] = None, minimize: bool = False) -> List[np.ndarray]:
+        """
+        Given a grid (numpy 2D array), attempt to find the n previous grids
+        that could have produced it according to the Game of Life rules.
+        
+        Args:
+            grid: The target grid.
+            n: Number of previous grids to find.
+            seed: Optional integer seed for randomization.
+            exclude: Optional list of grids to exclude from the search.
+            minimize: Whether to try to minimize the number of alive cells (default False).
+            
+        Returns:
+            A list of numpy arrays of the same shape.
+        """
+        found_solutions = []
+        current_exclude = list(exclude) if exclude else []
+        
+        for i in range(n):
+            # If minimize is True, subclasses should handle it or this default implementation 
+            # will just find *any* solution.
+            # Ideally, minimizing solvers override this method.
+            current_seed = (seed + i) if seed is not None else None
+            sol = self.find_previous(grid, seed=current_seed, exclude=current_exclude)
+            if sol is not None:
+                found_solutions.append(sol)
+                current_exclude.append(sol)
+            else:
+                break
+        return found_solutions
 
 
 class HigherOrderSolver(ABC):
