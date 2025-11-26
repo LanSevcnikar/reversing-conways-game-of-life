@@ -1,7 +1,9 @@
 import time
-from typing import List, Optional
+from typing import List, Optional, Union
 from abc import ABC, abstractmethod
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 
 class GameOfLifeGrid:
@@ -139,3 +141,203 @@ class TimeEvaluator:
             "avg_time": sum(times) / len(times),
             "times": times,
         }
+
+
+class GameOfLifeVisualizer:
+    """
+    Visualizes the evolution of a Game of Life grid over time using matplotlib animation.
+    Can display a looping animation of n steps with customizable timing.
+    """
+    
+    def __init__(self, game_grid: GameOfLifeGrid, interval: float = 200, loop_pause: float = 2000):
+        """
+        Initialize the visualizer.
+        
+        Args:
+            game_grid: GameOfLifeGrid instance to visualize
+            interval: Time between frames in milliseconds (default: 200ms)
+            loop_pause: Additional pause when loop repeats in milliseconds (default: 2000ms)
+        """
+        self.game_grid = game_grid
+        self.interval = interval
+        self.loop_pause = loop_pause
+        self.fig = None
+        self.ax = None
+        self.im = None
+        self.animation = None
+        self.grids_sequence = []
+        self.current_frame = 0
+        
+    def generate_sequence(self, steps: int) -> List[np.ndarray]:
+        """
+        Generate a sequence of grids by evolving the game for n steps.
+        
+        Args:
+            steps: Number of steps to evolve
+            
+        Returns:
+            List of grid states [initial, step1, step2, ..., step_n]
+        """
+        sequence = [self.game_grid.grid.copy()]
+        
+        for _ in range(steps):
+            self.game_grid.compute_next()
+            self.game_grid.advance()
+            sequence.append(self.game_grid.grid.copy())
+        
+        return sequence
+    
+    def visualize_from_sequence(self, grids: List[np.ndarray], title: str = "Conway's Game of Life"):
+        """
+        Visualize a pre-computed sequence of grids.
+        
+        Args:
+            grids: List of grid states to visualize
+            title: Title for the visualization window
+        """
+        self.grids_sequence = grids
+        self._setup_plot(title)
+        self._create_animation()
+        plt.show()
+    
+    def visualize(self, steps: int, title: str = "Conway's Game of Life"):
+        """
+        Visualize the evolution of the game for n steps with looping.
+        
+        Args:
+            steps: Number of steps to evolve and display
+            title: Title for the visualization window
+        """
+        # Generate the sequence
+        self.grids_sequence = self.generate_sequence(steps)
+        
+        # Setup and show
+        self._setup_plot(title)
+        self._create_animation()
+        plt.show()
+    
+    def _setup_plot(self, title: str):
+        """Setup the matplotlib figure and axes."""
+        self.fig, self.ax = plt.subplots(figsize=(10, 10))
+        self.ax.set_title(title, fontsize=16, fontweight='bold')
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
+        
+        # Initial image
+        self.im = self.ax.imshow(
+            self.grids_sequence[0], 
+            cmap='binary', 
+            interpolation='nearest',
+            vmin=0,
+            vmax=1
+        )
+        
+        # Add a text element to show the current step
+        self.step_text = self.ax.text(
+            0.02, 0.98, '', 
+            transform=self.ax.transAxes,
+            fontsize=12,
+            verticalalignment='top',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8)
+        )
+    
+    def _update_frame(self, frame_num: int):
+        """
+        Update function for animation.
+        
+        Args:
+            frame_num: Current frame number from FuncAnimation
+            
+        Returns:
+            Updated artists
+        """
+        # Calculate which grid to show (with looping)
+        grid_idx = frame_num % len(self.grids_sequence)
+        
+        # Update the image
+        self.im.set_array(self.grids_sequence[grid_idx])
+        
+        # Update the step counter
+        self.step_text.set_text(f'Step: {grid_idx}/{len(self.grids_sequence)-1}')
+        
+        return [self.im, self.step_text]
+    
+    def _frame_interval(self, frame_num: int) -> float:
+        """
+        Calculate the interval for the current frame.
+        Adds extra pause when the loop repeats.
+        
+        Args:
+            frame_num: Current frame number
+            
+        Returns:
+            Interval in milliseconds
+        """
+        # Check if we're at the end of a loop (about to restart)
+        if frame_num > 0 and frame_num % len(self.grids_sequence) == 0:
+            return self.loop_pause
+        return self.interval
+    
+    def _create_animation(self):
+        """Create the animation object."""
+        # We'll use a simple approach: repeat the sequence indefinitely
+        # and handle the pause manually by adjusting intervals
+        
+        # Create animation that loops indefinitely
+        self.animation = FuncAnimation(
+            self.fig,
+            self._update_frame,
+            frames=self._frame_generator(),
+            interval=self.interval,
+            blit=True,
+            repeat=True,
+            cache_frame_data=False
+        )
+    
+    def _frame_generator(self):
+        """
+        Generator that yields frame numbers and handles loop pausing.
+        """
+        frame = 0
+        while True:
+            yield frame
+            frame += 1
+            
+            # Add pause at the end of each loop
+            if frame % len(self.grids_sequence) == 0:
+                # Pause by yielding the same frame multiple times
+                pause_frames = int(self.loop_pause / self.interval)
+                for _ in range(pause_frames):
+                    yield frame - 1
+    
+    def save_animation(self, filename: str, steps: int, fps: int = 5, dpi: int = 100):
+        """
+        Save the animation to a file (requires ffmpeg or pillow).
+        
+        Args:
+            filename: Output filename (e.g., 'game.gif' or 'game.mp4')
+            steps: Number of steps to include in the saved animation
+            fps: Frames per second
+            dpi: Dots per inch for the output
+        """
+        # Generate sequence if not already done
+        if not self.grids_sequence:
+            self.grids_sequence = self.generate_sequence(steps)
+        
+        # Setup plot
+        self._setup_plot("Conway's Game of Life")
+        
+        # Create a finite animation for saving
+        anim = FuncAnimation(
+            self.fig,
+            self._update_frame,
+            frames=len(self.grids_sequence),
+            interval=1000/fps,
+            blit=True,
+            repeat=True
+        )
+        
+        # Save
+        anim.save(filename, writer='pillow' if filename.endswith('.gif') else 'ffmpeg', fps=fps, dpi=dpi)
+        print(f"Animation saved to {filename}")
+
