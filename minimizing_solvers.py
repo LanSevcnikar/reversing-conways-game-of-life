@@ -5,7 +5,7 @@ import tempfile
 from typing import Optional, List, Tuple
 from z3 import Solver, Int, Sum, If, Or, And, sat, Not, is_true, set_param, Bool
 from scipy.optimize import milp, LinearConstraint, Bounds
-from solvers import Z3PredecessorFinder, SATPredecessorFinder, ILPPredecessorFinder, z3_not, is_true
+from solvers import Z3PredecessorFinder, SATPredecessorFinder, ILPPredecessorFinder, z3_not, z3_is_true
 
 class Z3MinimizerSolver(Z3PredecessorFinder):
     def find_previous(self, grid: np.ndarray, seed: Optional[int] = None, exclude: Optional[List[np.ndarray]] = None, max_alive: Optional[int] = None) -> Optional[np.ndarray]:
@@ -68,7 +68,7 @@ class Z3MinimizerSolver(Z3PredecessorFinder):
             res = np.zeros((rows, cols), dtype=int)
             for r in range(rows):
                 for c in range(cols):
-                    if is_true(m[vars_grid[r][c]]):
+                    if z3_is_true(m[vars_grid[r][c]]):
                         res[r, c] = 1
             return res
         return None

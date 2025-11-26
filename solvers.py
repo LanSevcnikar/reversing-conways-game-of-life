@@ -11,8 +11,9 @@ from scipy.optimize import milp, LinearConstraint, Bounds
 def z3_not(expr):
     return Not(expr)
 
-def is_true(val):
-    return is_true(val)
+def z3_is_true(val):
+    from z3 import is_true as z3_is_true_impl
+    return z3_is_true_impl(val)
 
 class Z3PredecessorFinder(PredecessorFinder):
     def find_previous(self, grid: np.ndarray, seed: Optional[int] = None, exclude: Optional[List[np.ndarray]] = None) -> Optional[np.ndarray]:
@@ -80,8 +81,8 @@ class Z3PredecessorFinder(PredecessorFinder):
             res = np.zeros((rows, cols), dtype=int)
             for r in range(rows):
                 for c in range(cols):
-                    # is_true returns True if the boolean is true in the model
-                    if is_true(m[vars_grid[r][c]]):
+                    # z3_is_true returns True if the boolean is true in the model
+                    if z3_is_true(m[vars_grid[r][c]]):
                         res[r, c] = 1
             return res
         return None
