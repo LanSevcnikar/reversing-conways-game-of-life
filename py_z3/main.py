@@ -11,6 +11,24 @@ from py_z3.minimizing_solvers import ILPMinimizerSolver as ILPSolver
 
 import time
 
+
+def find_best_previous(grid, solver):
+    a = 1
+    b = 1000
+    
+    while(a+2 <= b):
+        m = int((b + a) / 2)
+        prev = solver.find_previous(grid, max_alive=m)
+        if prev is not None:
+            print("Found previous with max_alive =", m)
+            b = m - 1
+        else:
+            print("No previous found with max_alive =", m)
+            a = m + 1
+
+    return solver.find_previous(grid, max_alive=b)
+    
+
 text_generator = GenerateSmallText()
 grid = text_generator.text_to_grid("FMF", padding=5)
 number_of_ones = grid.sum()
@@ -18,10 +36,28 @@ number_of_ones = grid.sum()
 gol_grid = GameOfLifeGrid(grid=grid)
 gol_grid.pretty_print()
 print(number_of_ones)
-solver = SATSolver()
+SATS = SATSolver()
 ILPS = ILPSolver()
 
-number_of_steps = 4
+number_of_steps = 3
+
+for i in range(number_of_steps):
+    start = time.time()
+    prev = find_best_previous(grid, SATS)
+    end = time.time()
+    gol_grid = GameOfLifeGrid(grid=prev)
+    gol_grid.pretty_print()
+    number_of_ones = prev.sum()
+    print(number_of_ones)
+    print("Time taken:", end - start)
+    grid = prev
+
+for i in range(number_of_steps):
+    gol.pretty_print()
+    gol.compute_next()
+
+print("="*50)
+
 
 for i in range(number_of_steps):
     start = time.time()
@@ -39,26 +75,3 @@ for i in range(number_of_steps):
     gol.pretty_print()
     gol.compute_next()
 
-"""
-a = 1
-b = 500
-
-# bijection 
-while(a <= b):
-    m = int((b + a) / 2)
-    print("Checking max_alive =", m, "with a =", a, "and b =", b)
-    start = time.time()
-    prev = solver.find_previous(grid, max_alive=m)
-    end = time.time()
-    if prev is not None:
-        print("Found previous with max_alive =", m)
-        print(prev)
-        b = m - 1
-    else:
-        print("No previous found with max_alive =", m)
-        a = m + 1
-    print("Time taken:", end - start)
-    
-    
-    
-"""
