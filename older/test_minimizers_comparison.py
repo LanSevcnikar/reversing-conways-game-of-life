@@ -55,7 +55,8 @@ def main():
                 # Note: minimize=minimize_flag is passed to find_n_previous
                 # Standard solvers might ignore it or it might be False for them
                 solutions = solver.find_n_previous(target_grid, n=1, minimize=minimize_flag)
-                
+                first = solutions[0]
+                print(first.grid)
                 elapsed = time.time() - start_time
                 
                 if solutions:
@@ -118,4 +119,5 @@ def main():
             print(f"\nMinimizer found fewer alive cells in {better_count}/{total_count} cases.")
 
 if __name__ == "__main__":
+
     main()

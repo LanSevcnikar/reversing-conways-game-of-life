@@ -175,48 +175,55 @@ class TimeEvaluator:
 
 class GameOfLifeVisualizer:
     """
-    Visualizes the evolution of a Game of Life grid over time using matplotlib animation.
-    Can display a looping animation of n steps with customizable timing.
+    Visualizes the evolution of a Game of Life grid over time using matplotlib.
+    Supports interactive exploration with Next/Previous buttons if a solver is provided.
     """
     
-    def __init__(self, game_grid: GameOfLifeGrid, interval: float = 200, loop_pause: float = 2000):
+    def __init__(self, game_grid: GameOfLifeGrid, solver: Optional[PredecessorFinder] = None, interval: float = 200, loop_pause: float = 2000):
         """
         Initialize the visualizer.
         
         Args:
             game_grid: GameOfLifeGrid instance to visualize
-            interval: Time between frames in milliseconds (default: 200ms)
+            solver: Optional PredecessorFinder instance for finding previous states
+            interval: Time between frames in milliseconds (default: 200ms) - used for auto-play (if implemented)
             loop_pause: Additional pause when loop repeats in milliseconds (default: 2000ms)
         """
         self.game_grid = game_grid
+        self.solver = solver
         self.interval = interval
         self.loop_pause = loop_pause
         self.fig = None
         self.ax = None
         self.im = None
-        self.animation = None
-        self.grids_sequence = []
-        self.current_frame = 0
+        self.step_text = None
+        self.grids_sequence = [self.game_grid.grid.copy()]
+        self.current_idx = 0
         
-    def generate_sequence(self, steps: int) -> List[np.ndarray]:
+        # Buttons
+        self.btn_prev = None
+        self.btn_next = None
+        self.ax_prev = None
+        self.ax_next = None
+
+    def visualize(self, steps: int = 0, title: str = "Conway's Game of Life"):
         """
-        Generate a sequence of grids by evolving the game for n steps.
+        Start the visualization.
         
         Args:
-            steps: Number of steps to evolve
-            
-        Returns:
-            List of grid states [initial, step1, step2, ..., step_n]
+            steps: Number of initial steps to pre-calculate (optional)
+            title: Title for the visualization window
         """
-        sequence = [self.game_grid.grid.copy()]
+        # Pre-calculate steps if requested
+        if steps > 0:
+            for _ in range(steps):
+                self.game_grid.compute_next()
+                self.game_grid.advance()
+                self.grids_sequence.append(self.game_grid.grid.copy())
         
-        for _ in range(steps):
-            self.game_grid.compute_next()
-            self.game_grid.advance()
-            sequence.append(self.game_grid.grid.copy())
-        
-        return sequence
-    
+        self._setup_plot(title)
+        plt.show()
+
     def visualize_from_sequence(self, grids: List[np.ndarray], title: str = "Conway's Game of Life"):
         """
         Visualize a pre-computed sequence of grids.
@@ -226,36 +233,22 @@ class GameOfLifeVisualizer:
             title: Title for the visualization window
         """
         self.grids_sequence = grids
+        self.current_idx = 0
         self._setup_plot(title)
-        self._create_animation()
-        plt.show()
-    
-    def visualize(self, steps: int, title: str = "Conway's Game of Life"):
-        """
-        Visualize the evolution of the game for n steps with looping.
-        
-        Args:
-            steps: Number of steps to evolve and display
-            title: Title for the visualization window
-        """
-        # Generate the sequence
-        self.grids_sequence = self.generate_sequence(steps)
-        
-        # Setup and show
-        self._setup_plot(title)
-        self._create_animation()
         plt.show()
     
     def _setup_plot(self, title: str):
         """Setup the matplotlib figure and axes."""
         self.fig, self.ax = plt.subplots(figsize=(10, 10))
+        plt.subplots_adjust(bottom=0.2) # Make room for buttons
+        
         self.ax.set_title(title, fontsize=16, fontweight='bold')
         self.ax.set_xticks([])
         self.ax.set_yticks([])
         
         # Initial image
         self.im = self.ax.imshow(
-            self.grids_sequence[0], 
+            self.grids_sequence[self.current_idx], 
             cmap='binary', 
             interpolation='nearest',
             vmin=0,
@@ -264,110 +257,99 @@ class GameOfLifeVisualizer:
         
         # Add a text element to show the current step
         self.step_text = self.ax.text(
-            0.02, 0.98, '', 
+            0.02, 0.98, f'Step: {self.current_idx}', 
             transform=self.ax.transAxes,
             fontsize=12,
             verticalalignment='top',
             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8)
         )
-    
-    def _update_frame(self, frame_num: int):
-        """
-        Update function for animation.
+
+        # Add Buttons
+        from matplotlib.widgets import Button
         
-        Args:
-            frame_num: Current frame number from FuncAnimation
+        self.ax_prev = plt.axes([0.3, 0.05, 0.15, 0.075])
+        self.btn_prev = Button(self.ax_prev, 'Previous')
+        self.btn_prev.on_clicked(self._on_prev)
+        
+        self.ax_next = plt.axes([0.55, 0.05, 0.15, 0.075])
+        self.btn_next = Button(self.ax_next, 'Next')
+        self.btn_next.on_clicked(self._on_next)
+
+    def _update_display(self):
+        """Update the plot with the current grid."""
+        self.im.set_array(self.grids_sequence[self.current_idx])
+        self.step_text.set_text(f'Step: {self.current_idx}')
+        self.fig.canvas.draw_idle()
+
+    def _on_next(self, event):
+        """Handle Next button click."""
+        if self.current_idx < len(self.grids_sequence) - 1:
+            self.current_idx += 1
+        else:
+            # Calculate next step
+            # We need to use the last grid in the sequence
+            last_grid = self.grids_sequence[-1]
+            temp_game = GameOfLifeGrid(grid=last_grid)
+            temp_game.compute_next()
+            temp_game.advance()
+            new_grid = temp_game.grid.copy()
+            self.grids_sequence.append(new_grid)
+            self.current_idx += 1
+        
+        self._update_display()
+
+    def _on_prev(self, event):
+        """Handle Previous button click."""
+        if self.current_idx > 0:
+            self.current_idx -= 1
+            self._update_display()
+        elif self.solver:
+            # Try to find a predecessor
+            print("Finding predecessor...")
+            current_grid = self.grids_sequence[0]
+            prev_grid = self.solver.find_previous(current_grid)
             
-        Returns:
-            Updated artists
-        """
-        # Calculate which grid to show (with looping)
-        grid_idx = frame_num % len(self.grids_sequence)
-        
-        # Update the image
-        self.im.set_array(self.grids_sequence[grid_idx])
-        
-        # Update the step counter
-        self.step_text.set_text(f'Step: {grid_idx}/{len(self.grids_sequence)-1}')
-        
-        return [self.im, self.step_text]
-    
-    def _frame_interval(self, frame_num: int) -> float:
-        """
-        Calculate the interval for the current frame.
-        Adds extra pause when the loop repeats.
-        
-        Args:
-            frame_num: Current frame number
-            
-        Returns:
-            Interval in milliseconds
-        """
-        # Check if we're at the end of a loop (about to restart)
-        if frame_num > 0 and frame_num % len(self.grids_sequence) == 0:
-            return self.loop_pause
-        return self.interval
-    
-    def _create_animation(self):
-        """Create the animation object."""
-        # We'll use a simple approach: repeat the sequence indefinitely
-        # and handle the pause manually by adjusting intervals
-        
-        # Create animation that loops indefinitely
-        self.animation = FuncAnimation(
-            self.fig,
-            self._update_frame,
-            frames=self._frame_generator(),
-            interval=self.interval,
-            blit=True,
-            repeat=True,
-            cache_frame_data=False
-        )
-    
-    def _frame_generator(self):
-        """
-        Generator that yields frame numbers and handles loop pausing.
-        """
-        frame = 0
-        while True:
-            yield frame
-            frame += 1
-            
-            # Add pause at the end of each loop
-            if frame % len(self.grids_sequence) == 0:
-                # Pause by yielding the same frame multiple times
-                pause_frames = int(self.loop_pause / self.interval)
-                for _ in range(pause_frames):
-                    yield frame - 1
-    
+            if prev_grid is not None:
+                print("Predecessor found!")
+                self.grids_sequence.insert(0, prev_grid)
+                # current_idx stays 0, but now points to the new previous grid
+                self._update_display()
+            else:
+                print("No predecessor found.")
+        else:
+            print("No previous history and no solver provided.")
+
     def save_animation(self, filename: str, steps: int, fps: int = 5, dpi: int = 100):
         """
         Save the animation to a file (requires ffmpeg or pillow).
-        
-        Args:
-            filename: Output filename (e.g., 'game.gif' or 'game.mp4')
-            steps: Number of steps to include in the saved animation
-            fps: Frames per second
-            dpi: Dots per inch for the output
+        This method creates a non-interactive animation for saving.
         """
-        # Generate sequence if not already done
-        if not self.grids_sequence:
-            self.grids_sequence = self.generate_sequence(steps)
+        # Generate sequence if needed
+        temp_seq = [self.game_grid.grid.copy()]
+        temp_game = GameOfLifeGrid(grid=self.game_grid.grid.copy())
+        for _ in range(steps):
+            temp_game.compute_next()
+            temp_game.advance()
+            temp_seq.append(temp_game.grid.copy())
         
-        # Setup plot
-        self._setup_plot("Conway's Game of Life")
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax.set_xticks([])
+        ax.set_yticks([])
+        im = ax.imshow(temp_seq[0], cmap='binary', interpolation='nearest', vmin=0, vmax=1)
         
-        # Create a finite animation for saving
+        def update(frame):
+            im.set_array(temp_seq[frame])
+            return [im]
+
         anim = FuncAnimation(
-            self.fig,
-            self._update_frame,
-            frames=len(self.grids_sequence),
+            fig,
+            update,
+            frames=len(temp_seq),
             interval=1000/fps,
-            blit=True,
-            repeat=True
+            blit=True
         )
         
-        # Save
         anim.save(filename, writer='pillow' if filename.endswith('.gif') else 'ffmpeg', fps=fps, dpi=dpi)
         print(f"Animation saved to {filename}")
+        plt.close(fig)
 

@@ -7,8 +7,15 @@ Conway's Game of Life patterns.
 """
 
 import numpy as np
+import sys
+import os
+
+# Ensure we can import from current directory
+sys.path.append(os.getcwd())
+
 from py_z3.classes import GameOfLifeGrid, GameOfLifeVisualizer
 from generate_alphabet import GenerateText
+from solvers import SATPredecessorFinder
 
 
 def demo_simple_pattern():
@@ -25,15 +32,11 @@ def demo_simple_pattern():
     
     # Create game and visualizer
     game = GameOfLifeGrid(grid=grid)
-    visualizer = GameOfLifeVisualizer(
-        game, 
-        interval=500,      # 500ms between frames
-        loop_pause=2000    # 2 second pause when loop repeats
-    )
+    visualizer = GameOfLifeVisualizer(game)
     
     # Visualize 10 steps
     print("\nVisualizing 10 steps (close window to continue)...")
-    visualizer.visualize(steps=10, title="Blinker Pattern")
+    visualizer.visualize(steps=10, title="Blinker Pattern (Click Next/Prev)")
 
 
 def demo_glider():
@@ -55,11 +58,7 @@ def demo_glider():
     
     # Create game and visualizer
     game = GameOfLifeGrid(grid=grid)
-    visualizer = GameOfLifeVisualizer(
-        game,
-        interval=300,
-        loop_pause=1500
-    )
+    visualizer = GameOfLifeVisualizer(game)
     
     # Visualize 20 steps
     print("\nVisualizing 20 steps (close window to continue)...")
@@ -81,11 +80,7 @@ def demo_alphabet_letter():
     
     # Create game and visualizer
     game = GameOfLifeGrid(grid=grid)
-    visualizer = GameOfLifeVisualizer(
-        game,
-        interval=400,
-        loop_pause=2500
-    )
+    visualizer = GameOfLifeVisualizer(game)
     
     # Visualize 15 steps
     print("\nVisualizing 15 steps (close window to continue)...")
@@ -121,15 +116,38 @@ def demo_from_sequence():
     # Visualize the sequence
     # Note: we still need a GameOfLifeGrid instance, but it won't be used
     dummy_game = GameOfLifeGrid(grid=grid1)
-    visualizer = GameOfLifeVisualizer(dummy_game, interval=600, loop_pause=3000)
+    visualizer = GameOfLifeVisualizer(dummy_game)
     
     print("\nVisualizing pre-computed sequence (close window to continue)...")
     visualizer.visualize_from_sequence(sequence, title="Pre-computed Sequence")
 
 
+def demo_interactive_solver():
+    """Demo with interactive solver (finding predecessors)."""
+    print("\nDemo 5: Interactive Solver (Reverse Game of Life)")
+    print("=" * 50)
+    
+    # Generate letter A
+    gen = GenerateText()
+    grid = gen.text_to_grid('A')
+    
+    print("Initial grid (Letter A). You can click 'Previous' to find predecessors!")
+    
+    # Create solver
+    print("Initializing SAT Solver...")
+    solver = SATPredecessorFinder()
+    
+    # Create game and visualizer with solver
+    game = GameOfLifeGrid(grid=grid)
+    visualizer = GameOfLifeVisualizer(game, solver=solver)
+    
+    print("\nVisualizing... Click 'Previous' to go back in time!")
+    visualizer.visualize(steps=0, title="Interactive Solver - Click Previous!")
+
+
 def demo_save_animation():
     """Demo saving an animation to a file."""
-    print("\nDemo 5: Save Animation to GIF")
+    print("\nDemo 6: Save Animation to GIF")
     print("=" * 50)
     
     # Create a glider
@@ -144,7 +162,7 @@ def demo_save_animation():
     game = GameOfLifeGrid(grid=grid)
     visualizer = GameOfLifeVisualizer(game)
     
-    output_file = "/home/lan-sevcnikar/Documents/conways_game_of_life_reverse/glider_animation.gif"
+    output_file = os.path.join(os.getcwd(), "glider_animation.gif")
     
     print(f"Saving animation to {output_file}...")
     try:
@@ -166,6 +184,7 @@ if __name__ == "__main__":
     demo_glider()
     demo_alphabet_letter()
     demo_from_sequence()
+    demo_interactive_solver()
     demo_save_animation()
     
     print("\n" + "=" * 50)
