@@ -1,0 +1,238 @@
+import os
+import numpy as np
+
+class GenerateSmallText:
+    def __init__(self):
+        # Smaller 5x3 character maps
+        self.char_map = {
+            'A': [
+                [0, 1, 0],
+                [1, 0, 1],
+                [1, 1, 1],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'B': [
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 1, 0]
+            ],
+            'C': [
+                [0, 1, 1],
+                [1, 0, 0],
+                [1, 0, 0],
+                [1, 0, 0],
+                [0, 1, 1]
+            ],
+            'D': [
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 1, 0]
+            ],
+            'E': [
+                [1, 1, 1],
+                [1, 0, 0],
+                [1, 1, 0],
+                [1, 0, 0],
+                [1, 1, 1]
+            ],
+            'F': [
+                [1, 1, 1],
+                [1, 0, 0],
+                [1, 1, 0],
+                [1, 0, 0],
+                [1, 0, 0]
+            ],
+            'G': [
+                [0, 1, 1],
+                [1, 0, 0],
+                [1, 0, 1],
+                [1, 0, 1],
+                [0, 1, 1]
+            ],
+            'H': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 1, 1],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'I': [
+                [1, 1, 1],
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0],
+                [1, 1, 1]
+            ],
+            'J': [
+                [0, 0, 1],
+                [0, 0, 1],
+                [0, 0, 1],
+                [1, 0, 1],
+                [0, 1, 0]
+            ],
+            'K': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'L': [
+                [1, 0, 0],
+                [1, 0, 0],
+                [1, 0, 0],
+                [1, 0, 0],
+                [1, 1, 1]
+            ],
+            'M': [
+                [1, 0, 1],
+                [1, 1, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'N': [
+                [1, 0, 1],
+                [1, 1, 1],
+                [1, 1, 1],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'O': [
+                [0, 1, 0],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [0, 1, 0]
+            ],
+            'P': [
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 1, 0],
+                [1, 0, 0],
+                [1, 0, 0]
+            ],
+            'Q': [
+                [0, 1, 0],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 1, 0],
+                [0, 1, 1]
+            ],
+            'R': [
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 1, 0],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'S': [
+                [0, 1, 1],
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+                [1, 1, 0]
+            ],
+            'T': [
+                [1, 1, 1],
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0]
+            ],
+            'U': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [0, 1, 0]
+            ],
+            'V': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [0, 1, 0]
+            ],
+            'W': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 0, 1],
+                [1, 1, 1],
+                [1, 0, 1]
+            ],
+            'X': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [0, 1, 0],
+                [1, 0, 1],
+                [1, 0, 1]
+            ],
+            'Y': [
+                [1, 0, 1],
+                [1, 0, 1],
+                [0, 1, 0],
+                [0, 1, 0],
+                [0, 1, 0]
+            ],
+            'Z': [
+                [1, 1, 1],
+                [0, 0, 1],
+                [0, 1, 0],
+                [1, 0, 0],
+                [1, 1, 1]
+            ]
+        }
+
+    def get_letter_grid(self, char):
+        char = char.upper()
+        return self.char_map.get(char, [[0]*3]*5)
+
+    def text_to_grid(self, text: str, padding: int = 3) -> np.ndarray:
+        text = text.upper()
+        grids = []
+        for char in text:
+            if char in self.char_map:
+                grids.append(np.array(self.char_map[char]))
+            else:
+                # Space or unknown
+                grids.append(np.zeros((5, 3), dtype=int))
+        
+        if not grids:
+            return np.zeros((5, 0), dtype=int)
+            
+        # Add padding between letters
+        pad_col = np.zeros((5, 2), dtype=int)
+        final_grid = grids[0]
+        for g in grids[1:]:
+            final_grid = np.hstack((final_grid, pad_col, g))
+            
+        # Add padding around the whole thing
+        final_grid = np.pad(final_grid, ((padding, padding), (padding, padding)), mode='constant')
+        
+        return final_grid
+
+def main():
+    # Generate small alphabet files
+    gen = GenerateSmallText()
+    output_dir = "alphabet_small"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    for char_code in range(ord('a'), ord('z') + 1):
+        char = chr(char_code)
+        grid = gen.get_letter_grid(char)
+        
+        filename = os.path.join(output_dir, f"{char}.txt")
+        with open(filename, 'w') as f:
+            for row in grid:
+                f.write(','.join(map(str, row)) + '\n')
+        print(f"Generated {filename}")
+
+if __name__ == "__main__":
+    main()

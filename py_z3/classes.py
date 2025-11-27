@@ -61,6 +61,25 @@ class GameOfLifeGrid:
             current = next_
         return np.array_equal(current, other.grid)
 
+    def pretty_print(self):
+        """
+        Print the grid in a pretty format using unicode block characters.
+        """
+        # Top border
+        print("┌" + "─" * (self.width * 2) + "┐")
+        
+        for row in self.grid:
+            print("│", end="")
+            for cell in row:
+                if cell == 1:
+                    print("██", end="")
+                else:
+                    print("  ", end="")
+            print("│")
+            
+        # Bottom border
+        print("└" + "─" * (self.width * 2) + "┘")
+
 
 class PredecessorFinder(ABC):
     """

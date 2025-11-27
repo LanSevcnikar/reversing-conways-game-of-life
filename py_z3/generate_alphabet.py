@@ -252,13 +252,13 @@ class GenerateText:
                 grids.append(np.array(self.char_map[char]))
             else:
                 # Space or unknown
-                grids.append(np.zeros((7, 5), dtype=int))
+                grids.append(np.zeros((7, padd5), dtype=int))
         
         if not grids:
             return np.zeros((7, 0), dtype=int)
             
         # Add padding between letters
-        pad_col = np.zeros((7, padding), dtype=int)
+        pad_col = np.zeros((7, 5), dtype=int)
         final_grid = grids[0]
         for g in grids[1:]:
             final_grid = np.hstack((final_grid, pad_col, g))
