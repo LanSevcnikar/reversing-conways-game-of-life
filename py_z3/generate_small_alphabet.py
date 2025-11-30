@@ -218,21 +218,12 @@ class GenerateSmallText:
         return final_grid
 
 def main():
-    # Generate small alphabet files
+    # save to file text FMF 
     gen = GenerateSmallText()
-    output_dir = "alphabet_small"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    for char_code in range(ord('a'), ord('z') + 1):
-        char = chr(char_code)
-        grid = gen.get_letter_grid(char)
-        
-        filename = os.path.join(output_dir, f"{char}.txt")
-        with open(filename, 'w') as f:
-            for row in grid:
-                f.write(','.join(map(str, row)) + '\n')
-        print(f"Generated {filename}")
+    text = "FMF"
+    grid = gen.text_to_grid(text, padding=12)
+    for row in grid:
+        print("[" + ", ".join([str(cell) for cell in row]) + "]")
 
 if __name__ == "__main__":
     main()
