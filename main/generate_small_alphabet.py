@@ -221,7 +221,7 @@ def main():
     # save to file text FMF 
     gen = GenerateSmallText()
     text = "FMF"
-    grid = gen.text_to_grid(text, padding=12)
+    grid = gen.text_to_grid(text, padding=4)
     for row in grid:
         print("[" + ", ".join([str(cell) for cell in row]) + "]")
 

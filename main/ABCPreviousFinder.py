@@ -7,6 +7,9 @@ class PreviousFinder(ABC):
     Abstract base class for finding the previous (parent) grid
     that could have evolved into a given Game of Life grid.
     """
+    def init(self):
+        pass
+    
     @abstractmethod
     def find_previous(self, grid: np.ndarray, seed: Optional[int] = None, exclude: Optional[List[np.ndarray]] = None) -> Optional[np.ndarray]:
         """

@@ -127,4 +127,6 @@ class GameOfLife:
         """
         seed = np.random.randint(0, 1_000_000)
         previous_grid = previous_finder.find_previous(self.grid, seed)
+        if(previous_grid is None):
+            return None
         return GameOfLife(depth=self.depth + 1, grid=previous_grid)
